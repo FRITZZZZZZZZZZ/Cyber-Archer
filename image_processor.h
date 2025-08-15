@@ -32,7 +32,15 @@ const byte DRI = 0xDD;
 const byte DHP = 0xDE;
 const byte EXP = 0xDF;
 
+const byte DQT = 0xDB;
+
+struct QuantizationTable {
+    uint table[64] = { 0 };
+    bool set = false;
+};
 struct Header {
+    QuantizationTable quantizationTable[4];
     bool valid = true;
 };
+
 #endif
