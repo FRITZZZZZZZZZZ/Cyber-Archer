@@ -3,6 +3,14 @@
 
 #include "image_processor.h"
 
+void readAPPN(std::ifstream& inFile, Header* const header) {
+    std::cout << "Reading APPN Marker\n";
+    uint length = (inFile.get() << 8) + inFile.get();
+    for (uint i = 0; i < length - 2; ++i) {
+        inFile.get();
+    }
+}
+
 Header* readJPG(const std::string& filename) {
     // open JPG
     std::ifstream inFile = std::ifstream(filename, std::ios::in | std::ios::binary);
@@ -12,7 +20,6 @@ Header* readJPG(const std::string& filename) {
     }
 
     Header* header = new(std::nothrow) Header;
-
     if (header == nullptr) {
         std::cout << "Error - memmory error.\n";
         inFile.close();
@@ -27,8 +34,8 @@ Header* readJPG(const std::string& filename) {
         inFile.close();
         return header;
     }
-    byte last = inFile.get();
-    byte current = inFile.get();
+    last = inFile.get();
+    current = inFile.get();
     while (header->valid == true) {
         if(!inFile) {
             std::cout << "Error file ended early.\n";
@@ -44,13 +51,12 @@ Header* readJPG(const std::string& filename) {
         }
 
         if (current >= APP0 && current <= APP15) {
-
+            readAPPN(inFile, header);
         }
+
+        last = inFile.get();
+        current = inFile.get();
     }
-    {
-        /* code */
-    }
-    
     return header;
 }
 
